@@ -17,10 +17,9 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-def runWithVersion(version) {
-    return tasks.create("runWithVersion${version}") {
-        //if (project.hasProperty('libVersion')) {
-        def v = version
+task runWithVersion {
+    if (project.hasProperty('libVersion')) {
+        def v = libVersion
         println "Using version ${v}"
         project.configurations.all {
             resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -31,18 +30,8 @@ def runWithVersion(version) {
             }
         }
         project.tasks.run.execute()
-        //}
     }
 }
 
 // ./gradlew -q runWithVersion -PlibVersion=0.4 && ./gradlew -q runWithVersion -PlibVersion=0.5
 
-task runMultipleVersions {
-    if (project.hasProperty('libVersions')) {
-        def versions = libVersions.split(',')
-        versions.each { v ->
-            runWithVersion(v).execute()
-        }
-    }
-
-}
