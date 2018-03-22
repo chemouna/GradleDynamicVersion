@@ -10,11 +10,14 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:20.+'
+    compile 'com.google.guava:guava:23.5'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task dynamicInclude {
+task dynamicInclude (type: JavaExec) {
+    main = "com.mounacheikhna.dynamicversions.Start"
+    classpath = sourceSets.main.runtimeClasspath
+
     if (project.hasProperty('validationVersions')) {
         def versions = validationVersions.split(',')
         println versions
@@ -26,14 +29,12 @@ task dynamicInclude {
                     if (details.requested.name.contains("guava")) {
                         println "Try to change guava's version ${v}"
                         details.useVersion "${v}"
-                        details.because "User requested to include version ${v}"
+                        //details.because "User asked to use it"
                     }
                 }
-                compileJava
             }
             // TODO: run a task to show me that the version i want was included
             //compileJava
-
 
             /*doLast {
                 project.dependencies.each {
