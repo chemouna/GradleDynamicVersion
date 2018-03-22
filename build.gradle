@@ -17,24 +17,32 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task dynamicInclude {
-
-    if (project.hasProperty('validationVersion')) {
-        def v = validationVersion
-
-        println "input version ${v}"
+def runWithVersion(version) {
+    return tasks.create("runWithVersion${version}") {
+        //if (project.hasProperty('libVersion')) {
+        def v = version
+        println "Using version ${v}"
         project.configurations.all {
             resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                if (details.requested.name.contains("dummylib")) {
-                    println "Try to change version ${v}"
+                if (details.requested.group.contains("com.github.chemouna")
+                        && details.requested.name.contains("dummylib")) {
                     details.useVersion "${v}"
-                    //details.because "User asked to use it"
                 }
             }
         }
         project.tasks.run.execute()
+        //}
     }
 }
 
-// ./gradlew -q dynamicInclude -PvalidationVersion=0.4 && ./gradlew -q dynamicInclude -PvalidationVersion=0.5
+// ./gradlew -q runWithVersion -PlibVersion=0.4 && ./gradlew -q runWithVersion -PlibVersion=0.5
 
+task runMultipleVersions {
+    if (project.hasProperty('libVersions')) {
+        def versions = libVersions.split(',')
+        versions.each { v ->
+            runWithVersion(v).execute()
+        }
+    }
+
+}
