@@ -1,6 +1,6 @@
 #!/bin/bash
 
 for i in "$@"; do
-    echo "file: $i"
+    echo "For version: $i"
     ./gradlew -q runWithVersion -PlibVersion=$i
 done

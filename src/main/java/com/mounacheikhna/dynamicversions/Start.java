@@ -5,6 +5,7 @@ import com.github.chemouna.dummylib.DummyVersion;
 public class Start {
 
     public static void main(String[] args) {
-        System.out.println(new DummyVersion().getVersion());
+        String version = new DummyVersion().getVersion();
+        System.out.println("Start is using "+ version);
     }
 }

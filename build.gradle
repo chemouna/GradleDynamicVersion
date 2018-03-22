@@ -19,15 +19,10 @@ dependencies {
 
 task runWithVersion {
     if (project.hasProperty('libVersion')) {
-        def v = libVersion
-        println "Using version ${v}"
-        project.configurations.all {
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                if (details.requested.group.contains("com.github.chemouna")
-                        && details.requested.name.contains("dummylib")) {
-                    details.useVersion "${v}"
-                }
-            }
+        println "Using version ${libVersion}"
+
+        project.dependencies {
+            compile "com.github.chemouna:dummylib:${libVersion}"
         }
         project.tasks.run.execute()
     }
