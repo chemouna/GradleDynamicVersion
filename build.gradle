@@ -1,9 +1,11 @@
 group 'com.mounacheikhna'
 version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
+
+mainClassName = "com.mounacheikhna.dynamicversions.Start"
 
 repositories {
     mavenCentral()
@@ -15,28 +17,24 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-task dynamicInclude (type: JavaExec) {
-    main = "com.mounacheikhna.dynamicversions.Start"
-    classpath = sourceSets.main.runtimeClasspath
+task dynamicInclude {
 
-    if (project.hasProperty('validationVersions')) {
-        def versions = validationVersions.split(',')
-        println versions
+    if (project.hasProperty('validationVersion')) {
+        def v = validationVersion
 
-        versions.each { v ->
-            println "input version ${v}"
-            project.configurations.all {
-                resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                    if (details.requested.name.contains("dummylib")) {
-                        println "Try to change version ${v}"
-                        details.useVersion "${v}"
-                        //details.because "User asked to use it"
-                    }
+        println "input version ${v}"
+        project.configurations.all {
+            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                if (details.requested.name.contains("dummylib")) {
+                    println "Try to change version ${v}"
+                    details.useVersion "${v}"
+                    //details.because "User asked to use it"
                 }
             }
-            // TODO: run a task to show me that the version i want was included
-            //compileJava
-
         }
+        project.tasks.run.execute()
     }
 }
+
+// ./gradlew -q dynamicInclude -PvalidationVersion=0.4 && ./gradlew -q dynamicInclude -PvalidationVersion=0.5
+
