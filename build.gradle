@@ -31,14 +31,16 @@ task runWithVersion {
 task allVersions {
     if (project.hasProperty('libVersions')) {
         def versions = libVersions.split(',')
+        //String t = ""
         versions.each { v ->
-            task "task${v}" {
+            // TODO: another option to try is to have a value
+            tasks.create(name: "taskRun", overwrite: true) {
                 project.dependencies {
                     compile "com.github.chemouna:dummylib:${v}"
                 }
             }
 
-            project.tasks.run.mustRunAfter project.tasks.getByName("task${v}")
+            //project.tasks.run.mustRunAfter project.tasks.getByName("task${v}")
         }
 
         versions.each { v ->
@@ -50,6 +52,16 @@ task allVersions {
 
 apply from: 'explore.gradle'
 
+class GreetingTask extends DefaultTask {
 
-// ./gradlew -q runWithVersion -PlibVersion=0.4 && ./gradlew -q runWithVersion -PlibVersion=0.5
+    String greeting = "Hi There!"
 
+    @TaskAction
+    def greet(){
+        println greeting
+    }
+}
+
+task hello3(type: GreetingTask) {
+    greeting = "I changed the greeting"
+}

@@ -29,3 +29,19 @@ task intro(dependsOn: hello) {
     }
 }
 task0.dependsOn task1, task2, task3
+
+task hello2 {
+    doLast {
+        println 'hello world'
+    }
+}
+
+hello2.onlyIf { !project.hasProperty('skipHello') }
+
+task disableMe {
+    doLast {
+        println 'This should not be printed if the task is disabled.'
+    }
+}
+disableMe.enabled = false
+
