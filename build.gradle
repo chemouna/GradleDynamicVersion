@@ -28,5 +28,28 @@ task runWithVersion {
     }
 }
 
+task allVersions {
+    if (project.hasProperty('libVersions')) {
+        def versions = libVersions.split(',')
+        versions.each { v ->
+            task "task${v}" {
+                project.dependencies {
+                    compile "com.github.chemouna:dummylib:${v}"
+                }
+            }
+
+            project.tasks.run.mustRunAfter project.tasks.getByName("task${v}")
+        }
+
+        versions.each { v ->
+            println "Running task for $v"
+            project.tasks.getByName("task${v}").execute()
+        }
+    }
+}
+
+apply from: 'explore.gradle'
+
+
 // ./gradlew -q runWithVersion -PlibVersion=0.4 && ./gradlew -q runWithVersion -PlibVersion=0.5
 

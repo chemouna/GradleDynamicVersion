@@ -1,0 +1,31 @@
+
+
+task hello {
+    doLast {
+        println "Hello World!"
+    }
+}
+
+task count {
+    doLast {
+        4.times {
+            print "$it "
+        }
+    }
+}
+
+task intro(dependsOn: hello) {
+    doLast {
+        println "From Gradle"
+    }
+}
+
+// this one could be useful to use instead of run task
+4.times { index ->
+    task "task$index" {
+        doLast {
+            println "I'm task with index $index"
+        }
+    }
+}
+task0.dependsOn task1, task2, task3
